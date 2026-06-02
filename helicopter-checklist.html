@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FlightCheck">
+<meta name="theme-color" content="#1e3a5f">
+<title>FlightCheck – Toran R44</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f8fa;
+    --panel: #ffffff;
+    --panel2: #f0f2f5;
+    --border: #e2e5ea;
+    --border-strong: #c8cdd6;
+    --blue: #1a56db;
+    --blue-light: #eff6ff;
+    --blue-mid: #bfdbfe;
+    --green: #16803c;
+    --green-bg: #f0fdf4;
+    --green-mid: #bbf7d0;
+    --red: #b91c1c;
+    --red-bg: #fef2f2;
+    --red-mid: #fecaca;
+    --text: #111827;
+    --text-mid: #374151;
+    --text-dim: #9ca3af;
+    --accent: #1e3a5f;
+    --sans: 'Inter', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+    --radius: 8px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow: 0 2px 8px rgba(0,0,0,0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--accent);
+    color: white;
+    padding: 14px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  }
+
+  .logo-block { display: flex; flex-direction: column; gap: 2px; }
+  .logo-title {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: 0.5px;
+    color: white;
+    line-height: 1;
+  }
+  .logo-sub {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 0.5px;
+  }
+
+  .header-right { display: flex; align-items: center; gap: 10px; }
+
+  .clock {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: rgba(255,255,255,0.75);
+    white-space: nowrap;
+    background: rgba(255,255,255,0.08);
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+
+  .reset-btn {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.20);
+    color: rgba(255,255,255,0.85);
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 12px;
+    padding: 8px 14px;
+    cursor: pointer;
+    border-radius: 6px;
+    white-space: nowrap;
+    min-height: 44px;
+    letter-spacing: 0.2px;
+  }
+  .reset-btn:active { background: rgba(255,255,255,0.20); }
+
+
+
+  .gonogo-bar {
+    text-align: center;
+    padding: 8px 16px;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: var(--red-bg);
+    color: var(--red);
+    border-bottom: 1px solid var(--red-mid);
+    transition: all 0.3s;
+  }
+  .gonogo-bar.go {
+    background: var(--green-bg);
+    color: var(--green);
+    border-bottom-color: var(--green-mid);
+  }
+  .gonogo-bar.neutral {
+    background: var(--panel2);
+    color: var(--text-dim);
+    border-bottom-color: var(--border);
+  }
+  .gonogo-bar:last-child { border-bottom: none; }
+  .gonogo-sub {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    opacity: 0.75;
+    display: block;
+    margin-top: 1px;
+    text-transform: none;
+  }
+
+  /* ── PHASE TABS ── */
+  .phase-tabs {
+    display: flex;
+    overflow-x: auto;
+    background: var(--accent);
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .phase-tabs::-webkit-scrollbar { display: none; }
+
+  .phase-tab {
+    flex-shrink: 0;
+    padding: 12px 14px;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.15s;
+  }
+  .phase-tab.active {
+    color: white;
+    border-bottom-color: #f5a623;
+  }
+  .phase-tab:active { background: rgba(255,255,255,0.1); }
+
+  .phase-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 99px;
+    background: rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.7);
+    font-weight: 600;
+  }
+  .phase-badge.done { background: rgba(22,128,60,0.5); color: #86efac; }
+  .phase-badge.warn { background: rgba(245,166,35,0.25); color: #f5a623; }
+
+  /* ── CONTENT ── */
+  .phase-content { display: none; padding: 12px 12px 88px; }
+  .phase-content.active { display: block; }
+
+  .group-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    margin: 12px 0 6px;
+    background: var(--accent);
+    border-radius: var(--radius);
+  }
+  .group-name {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: white;
+    flex: 1;
+  }
+  .group-count {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.12);
+    padding: 2px 8px;
+    border-radius: 99px;
+  }
+
+  /* ── CHECKLIST ITEMS ── */
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 13px 14px;
+    margin-bottom: 5px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.15s;
+    min-height: 58px;
+    -webkit-user-select: none;
+    user-select: none;
+    box-shadow: var(--shadow-sm);
+  }
+  .item:active { transform: scale(0.99); box-shadow: none; }
+
+  .item.checked {
+    background: var(--green-bg);
+    border-color: var(--green-mid);
+    box-shadow: none;
+  }
+  .item.checked .item-name {
+    text-decoration: line-through;
+    color: var(--text-dim);
+  }
+  .item.checked .item-detail { color: #d1d5db; }
+
+  .item.critical { border-left: 3px solid var(--red); }
+  .item.critical.checked { border-left: 3px solid var(--green); border-color: var(--green-mid); }
+
+  /* Checkbox */
+  .checkbox {
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+    border: 2px solid var(--border-strong);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+    transition: all 0.15s;
+    font-size: 14px;
+    color: transparent;
+    background: white;
+  }
+  .item.checked .checkbox {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+  }
+
+  .item-body { flex: 1; min-width: 0; }
+  .item-name {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 1.3;
+    color: var(--text);
+  }
+  .checklist-group:first-child .group-header { margin-top: 4px; }
+  .item-detail {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 4px;
+    line-height: 1.6;
+  }
+  .item-critical-tag {
+    display: inline-block;
+    margin-top: 5px;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 9px;
+    padding: 2px 7px;
+    border-radius: 99px;
+    background: var(--red-bg);
+    color: var(--red);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border: 1px solid var(--red-mid);
+  }
+
+  .checklist-group { margin-bottom: 4px; }
+
+  /* Inline countdown timer */
+  .item-countdown {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: var(--panel2);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .item-countdown.running {
+    background: #fffbeb;
+    border-color: #fde68a;
+  }
+  .item-countdown.done {
+    background: var(--green-bg);
+    border-color: var(--green-mid);
+  }
+  .countdown-time {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    min-width: 44px;
+  }
+  .item-countdown.running .countdown-time { color: #b45309; }
+  .item-countdown.done .countdown-time { color: var(--green); }
+  .countdown-label {
+    font-family: var(--sans);
+    font-size: 11px;
+    color: var(--text-dim);
+    flex: 1;
+  }
+  .item-countdown.done .countdown-label { color: var(--green); font-weight: 600; }
+  .countdown-btn {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border-strong);
+    background: white;
+    color: var(--text-mid);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .countdown-btn:active { opacity: 0.7; }
+
+  /* Engine timer */
+  .engine-timer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    gap: 12px;
+    box-shadow: var(--shadow-sm);
+  }
+  .engine-timer.running {
+    background: var(--green-bg);
+    border-color: var(--green-mid);
+  }
+  .engine-timer-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+  .engine-timer-time {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 2px;
+    min-width: 80px;
+    text-align: center;
+  }
+  .engine-timer.running .engine-timer-time { color: var(--green); }
+  .engine-timer-btn {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 12px;
+    padding: 9px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border-strong);
+    background: var(--panel2);
+    color: var(--text-mid);
+    cursor: pointer;
+    min-height: 40px;
+    white-space: nowrap;
+  }
+  .engine-timer.running .engine-timer-btn {
+    background: var(--red-bg);
+    border-color: var(--red-mid);
+    color: var(--red);
+  }
+  .engine-timer-btn:active { opacity: 0.7; }
+
+  /* Check-all button */
+  .check-all-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 14px;
+    margin-bottom: 6px;
+    background: transparent;
+    color: var(--accent);
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.2px;
+    border: 1.5px solid var(--accent);
+    border-radius: 99px;
+    cursor: pointer;
+    opacity: 0.7;
+  }
+  .check-all-btn:active { opacity: 0.5; }
+  .check-all-btn.uncheck {
+    color: var(--text-dim);
+    border-color: var(--border);
+    opacity: 1;
+  }
+
+
+
+  /* ── BOTTOM STATS BAR ── */
+  .stats-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: stretch;
+    z-index: 50;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+  }
+  .status-block-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 12px;
+    border-left: 1px solid var(--border);
+    min-width: 130px;
+    gap: 2px;
+  }
+  .status-block {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 1px;
+    padding: 8px 10px;
+    border-radius: 5px;
+    text-align: center;
+    width: 100%;
+    transition: all 0.3s;
+    white-space: nowrap;
+  }
+  .status-block.red { background: var(--red); color: white; }
+  .status-block.green { background: var(--green); color: white; }
+  .status-block-sub {
+    font-family: var(--sans);
+    font-size: 8px;
+    color: var(--text-dim);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .stat-cell {
+    flex: 1;
+    text-align: center;
+    padding: 8px 4px;
+    border-right: 1px solid var(--border);
+  }
+  .stat-cell:last-child { border-right: none; }
+  .stat-num {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1;
+  }
+  .stat-num.green { color: var(--green); }
+  .stat-num.red { color: var(--red); }
+  .stat-label {
+    font-family: var(--sans);
+    font-size: 8px;
+    font-weight: 600;
+    color: var(--text-dim);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+
+  /* Input fields on items */
+  .item-input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: var(--panel2);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .item-input-label {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+  .item-input-field {
+    font-family: var(--mono);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    background: white;
+    border: 1px solid var(--border-strong);
+    border-radius: 5px;
+    padding: 6px 10px;
+    width: 100px;
+    text-align: center;
+    outline: none;
+  }
+  .item-input-field:focus { border-color: var(--blue); }
+  .item-input-unit {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  /* Flight summary widget */
+  .flight-summary { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .fs-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .fs-card-title {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: white;
+    background: var(--accent);
+    padding: 7px 14px;
+  }
+  .fs-card-title.blue { background: var(--blue); }
+  .fs-card-title.green { background: var(--green); }
+  .fs-card-title.slate { background: #475569; }
+  .flight-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .flight-summary-row:last-child { border-bottom: none; }
+  .flight-summary-row.highlight {
+    background: var(--blue-light);
+  }
+  .flight-summary-row.highlight-green {
+    background: var(--green-bg);
+  }
+  .flight-summary-label {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .flight-summary-value {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .flight-summary-row.highlight .flight-summary-value {
+    font-size: 20px;
+    color: var(--blue);
+  }
+  .flight-summary-row.highlight-green .flight-summary-value {
+    font-size: 20px;
+    color: var(--green);
+  }
+  .flight-summary-note {
+    font-family: var(--sans);
+    font-size: 11px;
+    color: var(--text-dim);
+    text-align: center;
+    padding: 10px 14px;
+    background: var(--panel2);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+  .flight-summary-empty {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--text-dim);
+    text-align: center;
+    padding: 16px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    line-height: 1.6;
+  }
+
+  /* Link buttons on items */
+  .item-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .item-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    background: var(--blue-light);
+    border: 1px solid var(--blue-mid);
+    color: var(--blue);
+    text-decoration: none;
+    white-space: nowrap;
+    min-height: 30px;
+  }
+  .item-link:active { opacity: 0.7; }
+</style>
+</head>
+<body>
+
+<!-- Splash screen -->
+<div id="splash" style="position:fixed;inset:0;z-index:9999;background:#1e3a5f;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;">
+  <svg width="100" height="100" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+    <rect width="512" height="512" rx="80" fill="rgba(255,255,255,0.08)"/>
+    <rect x="102" y="235" width="308" height="42" rx="21" fill="white" opacity="0.9"/>
+    <rect x="235" y="150" width="42" height="212" rx="21" fill="white" opacity="0.5"/>
+    <circle cx="256" cy="256" r="32" fill="#f5a623"/>
+  </svg>
+  <div style="text-align:center;">
+    <div style="font-family:system-ui,sans-serif;font-weight:800;font-size:28px;color:white;letter-spacing:3px;">FLIGHTCHECK</div>
+    <div style="font-family:monospace;font-size:12px;color:rgba(255,255,255,0.5);margin-top:6px;letter-spacing:1px;">ROBINSON R44 RAVEN II · TORAN</div>
+  </div>
+</div>
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const s = document.getElementById('splash');
+      if (s) { s.style.transition='opacity 0.5s'; s.style.opacity='0'; setTimeout(()=>s.remove(),500); }
+    }, 1400);
+  });
+</script>
+
+<header>
+  <div class="logo-block">
+    <div class="logo-title">TORAN</div>
+    <div class="logo-sub">ROBINSON R44 RAVEN II · CHECKLIST</div>
+  </div>
+  <div class="header-right">
+    <div class="clock" id="clock" style="font-family:monospace;font-size:14px;color:white;background:rgba(255,255,255,0.12);padding:5px 10px;border-radius:5px;">--:--:--Z</div>
+    <button class="reset-btn" onclick="resetAll()">⟳ RESET</button>
+  </div>
+</header>
+
+
+
+<!-- Engine Timer (shown only in startup/shutdown tabs) -->
+<div class="engine-timer" id="engineTimer" style="display:none; margin: 8px 12px 0;">
+  <div>
+    <div class="engine-timer-label">⏱ MOTORTIJD</div>
+    <div class="engine-timer-time" id="engineTimerDisplay">00:00</div>
+  </div>
+  <button class="engine-timer-btn" id="engineTimerBtn" onclick="toggleEngineTimer()">▶ START</button>
+</div>
+
+<div class="phase-tabs" id="phaseTabs"></div>
+
+<div id="phaseContents"></div>
+
+<div class="stats-bar">
+  <div class="stat-cell">
+    <div class="stat-num green" id="statDone">0</div>
+    <div class="stat-label">GEDAAN</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-num" id="statLeft">0</div>
+    <div class="stat-label">RESTEREND</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-num red" id="statCrit">0</div>
+    <div class="stat-label">KRITIEK</div>
+  </div>
+  <div id="mainBar" style="display:none"></div>
+  <div id="mainPct" style="display:none"></div>
+  <div class="status-block-cell">
+    <div class="status-block red" id="statusBlock">NO-GO</div>
+    <div class="status-block-sub" id="statusBlockSub">vertrek</div>
+    <span id="gonogoBar" style="display:none"></span>
+    <span id="shutdownBar" style="display:none"></span>
+    <span id="flightBar" style="display:none"></span>
+    <span id="gonogoSub" style="display:none"></span>
+    <span id="shutdownSub" style="display:none"></span>
+    <span id="flightSub" style="display:none"></span>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const clockEl = document.getElementById('clock');
+  if (clockEl) {
+    function tickClock() {
+      const now = new Date();
+      clockEl.textContent = String(now.getUTCHours()).padStart(2,'0') + ':' +
+        String(now.getUTCMinutes()).padStart(2,'0') + ':' +
+        String(now.getUTCSeconds()).padStart(2,'0') + 'Z';
+    }
+    tickClock();
+    setInterval(tickClock, 1000);
+  }
+});
+
+const PHASES = [
+  {
+    id: 'pre', name: 'Pre-Flight', icon: '📋',
+    groups: [
+      {
+        name: 'Persoonlijke Voorbereiding', icon: '🧑‍✈️',
+        items: [
+          { name: 'Fit om te vliegen', detail: 'Uitgerust, geen ziekte, geen stress. Geen alcohol/drugs: wettelijk min. 8u bottle-to-throttle, aanbevolen 12u.', critical: true },
+          { name: 'Vliegbrevet geldig en mee', detail: 'Vervaldatum en categorie controleren', critical: true },
+          { name: 'Medische geschiktheid geldig en mee', detail: 'Class 1 of Class 2, vervaldatum nakijken', critical: true },
+          { name: 'Gepaste kledij, stevige schoenen en headset meenemen', detail: 'Geen open schoeisel, weerbestendige kledij. Fluohesje meenemen.', critical: true },
+        ]
+      },
+      {
+        name: 'Administratie & Documenten', icon: '📄',
+        items: [
+          { name: 'Verzekering R44 actueel', detail: 'Polisnummer en dekking nakijken', critical: true },
+          { name: 'Luchtwaardigheidsbewijs (CoA) geldig', detail: 'Aan boord aanwezig en niet vervallen', critical: true },
+          { name: 'Inschrijvingsbewijs aanwezig', detail: 'Registratiedocument van de helikopter aan boord', critical: true },
+          { name: 'Logboek bijgewerkt voor vertrek', detail: 'Vorige vlucht correct ingevuld, openstaande opmerkingen nakijken', critical: true,
+            links: [{ label: 'FlightApp', url: 'https://play.google.com/store/apps/details?id=eu.unipage.flightapp' }] },
+          { name: 'Toran briefing (met instructeur)', detail: 'Route, bijzonderheden, verwachte retour', critical: false },
+        ]
+      },
+      {
+        name: 'Routevoorbereiding', icon: '🗺️',
+        items: [
+          { name: 'Route uitgewerkt (op kaart of app)', detail: 'Waypoints, luchtruimgrenzen en gevaarlijke zones aangeduid', critical: true,
+            links: [{ label: 'SkyDemon', url: 'https://play.google.com/store/apps/details?id=aero.skydemon.skydemonandroid' }] },
+          { name: 'Alternate luchthaven voorzien', detail: 'Alternatieve landingsplaats bepaald en gecontroleerd op beschikbaarheid', critical: true },
+          { name: "AIP's gecheckt", detail: 'AIP van vertrek- en bestemmingsluchthaven + AIP en route (luchtruim, procedures)', critical: true,
+            links: [{ label: 'AIP Belgium (Skeyes)', url: 'https://ops.skeyes.be/' }] },
+          { name: 'Specifieke regelgeving luchthavens gecheckt', detail: 'Website luchthaven: openingsuren, PPR, procedures, brandstof. Aerodrome handboek indien beschikbaar.', critical: true },
+          { name: "NOTAM's gecontroleerd", detail: 'Vertrekveld, route en bestemmingsveld — sluitingen, werkzaamheden, tijdelijke restricties', critical: true,
+            links: [
+              { label: 'Skeyes NOTAM', url: 'https://ops.skeyes.be' },
+              { label: 'SkyDemon', url: 'https://play.google.com/store/apps/details?id=aero.skydemon.skydemonandroid' }
+            ] },
+          { name: 'Massa en balans', detail: 'Max TOW R44: 1134 kg, CG-envelop OK. Zie POH R44 sectie 6 of Toran W&B sheet.', critical: true },
+          { name: 'Brandstofplanning berekend', detail: 'AvGas 100LL: trip fuel + reserve + 20 min VFR minimum. Verbruik: ±1 liter/min (0,2642 gal/min) — 1 gallon = 3,785 liter.', critical: true },
+          { name: 'Vluchtplan ingediend (indien vereist)', detail: '', critical: false },
+
+        ]
+      },
+      {
+        name: 'Weerbriefing', icon: '🌤️',
+        items: [
+          { name: 'METAR & TAF gecheckt voor vertrek en bestemming', detail: 'Wind, zicht, wolkenbasis, temperatuur, QNH', critical: true,
+            links: [
+              { label: 'AeroWetter', url: 'https://www.aerowetter.de' },
+              { label: 'Skeyes MET', url: 'https://ops.skeyes.be' }
+            ] },
+          { name: 'Windcheck op hoogte (route)', detail: 'Wind op kruishoogte, thermiek, turbulentie', critical: true,
+            links: [
+              { label: 'Windy', url: 'https://www.windy.com' },
+              { label: 'AeroWetter', url: 'https://www.aerowetter.de' }
+            ] },
+          { name: 'Zicht en wolkenbasis voldoende voor VFR', detail: 'VFR minima: zicht > 5 km, wolkenbasis > 1500 ft', critical: true },
+        ]
+      },
+      {
+        name: 'Communicatievoorbereiding', icon: '📻',
+        items: [
+          { name: 'Alle radiofrequenties opgezocht, genoteerd en overschakelpunten ingeschat', detail: 'ATIS, GND, TWR, APP, ACC voor vertrek, route en bestemming. Markeer overschakelpunten op kaart of in SkyDemon.', critical: true,
+            links: [
+              { label: 'Skeyes AIP', url: 'https://ops.skeyes.be/' },
+              { label: 'SkyDemon', url: 'https://play.google.com/store/apps/details?id=aero.skydemon.skydemonandroid' }
+            ] },
+          { name: 'ATIS beluisterd (indien van toepassing)', detail: 'Weersbericht, actieve baan, QNH noteren', critical: false },
+          { name: 'Noodfrequentie 121.5 MHz gekend', detail: 'Internationaal noodkanaal, altijd in gedachten houden', critical: false },
+          { name: 'Squawk codes genoteerd (indien van toepassing)', detail: 'Algemeen: 7000 VFR standaard · 2000 ATS · 5101 frequency monitoring. Nood: 7700 nood · 7600 radiostoring · 7500 kaping', critical: false },
+        ]
+      },
+    ]
+  },
+  {
+    id: 'walkaround', name: 'Walk-Around & Checks', icon: '🔍',
+    groups: [
+      {
+        name: 'Brandstof (AvGas 100LL)', icon: '⛽',
+        items: [
+          { name: 'Brandstof gesampled op water/vuil (indien nodig)', detail: 'Sump drain: beide tanks + central drain, min 3x', critical: false },
+          { name: 'Brandstofpeil gecontroleerd', detail: 'Type AvGas 100LL — overeenkomst met cockpitmeter controleren', critical: true },
+          { name: 'Indien nodig brandstof tanken', detail: 'Hoeveelheid getankt noteren (liters).', critical: false, inputField: { id: 'fuel_added', label: 'Bijgetankt', unit: 'L' } },
+          { name: 'Tankdoppen vergrendeld', detail: 'Beide tankvulpunten op vleugels', critical: true },
+        ]
+      },
+      {
+        name: 'Olie (4 punten)', icon: '🛢️',
+        items: [
+          { name: 'Motorolie gecontroleerd', detail: 'Min 7 qt, max 12 qt. Geen lekkage.', critical: true },
+          { name: 'Indien nodig olie bijvullen', detail: 'Hoeveelheid bijgevuld noteren.', critical: false, inputField: { id: 'oil_added', label: 'Bijgevuld', unit: 'liter' } },
+          { name: 'Main rotor gearbox oliepeil OK', detail: 'Peil tussen min en max, geen lekkage zichtbaar', critical: true },
+          { name: 'Tail rotor gearbox oliepeil OK', detail: 'Peil tussen min en max, geen lekkage zichtbaar', critical: true },
+          { name: 'Hydraulics oliepeil OK', detail: 'Hydraulisch reservoir peil controleren, geen lekkage', critical: true },
+        ]
+      },
+      {
+        name: 'Walk-around helikopter', icon: '🚁',
+        items: [
+          { name: 'Romp & landingsgestel', detail: 'Deuken, barsten, corrosie, losse klinknagels. Deuren en inspectieluiken vergrendeld. Skids zonder barsten of vervorming (skid tubes, cross tubes, fitting points). Pitot afdekking verwijderd. Antennes intact. Statische poorten vrij.', critical: true },
+          { name: 'Motor (Lycoming O-540)', detail: 'Koelvloeistof niveau OK. Spaakwiel/V-belt gespannen. Klepstoters lekkagevrij. Uitlaat en hitteschild intact.', critical: true },
+          { name: 'Hoofdrotor (2-bladig semi-rigide)', detail: 'Rotorbladen visueel OK (leading edge, trailing edge, tips). Rotorkop en teetering hinge zonder speling. Pitch links en mixing unit OK. Swashplate vrij. Rotor tie-down verwijderd.', critical: true },
+          { name: 'Staartrotor & staartsectie', detail: 'Staartrotorbladen intact. Tail rotor pitch links OK. Driveshaft zonder schade. Stabilisatorvlak en fin intact.', critical: true },
+        ]
+      },
+      {
+        name: 'Cabin', icon: '💺',
+        items: [
+          { name: 'Check waarschuwingslampjes', detail: 'Alle annunciator lights controleren bij inschakelen master', critical: true },
+          { name: 'Beginstand collective klok noteren', detail: '', critical: true, inputField: { id: 'collective_start', label: 'Beginstand', unit: 'uur' } },
+          { name: 'SkyDemon app gereed en route geladen', detail: 'Databases en kaartcycli bijgewerkt, route actief', critical: false,
+            links: [{ label: 'SkyDemon', url: 'https://play.google.com/store/apps/details?id=aero.skydemon.skydemonandroid' }] },
+          { name: 'Headset aangesloten', detail: '', critical: true },
+          { name: 'Pedalen afgesteld', detail: '', critical: true },
+          { name: 'Radiofrequenties programmeren (indien nodig)', detail: '', critical: false },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'startup', name: 'Start & Run-Up', icon: '🔑',
+    groups: [
+      {
+        name: 'Before Starting Engine (POH R44 Raven II)', icon: '💺',
+        items: [
+          { name: 'Seat belts', detail: 'Fastened', critical: true },
+          { name: 'Fuel shut-off valve', detail: 'ON', critical: true },
+          { name: 'Cyclic/collective friction', detail: 'OFF', critical: true },
+          { name: 'Cyclic, collective, pedals', detail: 'Full travel free', critical: true },
+          { name: 'Throttle', detail: 'Full travel free', critical: true },
+          { name: 'Collective', detail: 'Full down, friction ON', critical: true },
+          { name: 'Cyclic', detail: 'Neutral, friction ON', critical: true },
+          { name: 'Pedals', detail: 'Neutral', critical: true },
+          { name: 'Rotor brake', detail: 'Disengaged', critical: true },
+          { name: 'Circuit breakers', detail: 'In', critical: true },
+          { name: 'Landing lights', detail: 'OFF', critical: false },
+          { name: 'Avionics switch (if installed)', detail: 'OFF', critical: false },
+          { name: 'Clutch', detail: 'Disengaged', critical: true },
+          { name: 'Altimeter', detail: 'Set (QNH instellen)', critical: true },
+          { name: 'HYD and governor switches', detail: 'ON', critical: true },
+        ]
+      },
+      {
+        name: 'Starting Engine and Run-Up (POH R44 Raven II)', icon: '▶️',
+        items: [
+          { name: 'Throttle', detail: 'Closed', critical: true },
+          { name: 'Battery, strobe switches', detail: 'ON', critical: true },
+          { name: 'Area', detail: 'Clear — "Clear!" uitroepen voor het starten', critical: true },
+          { name: 'Mixture', detail: 'Rich', critical: true },
+          { name: 'Ignition switch', detail: 'Prime, then Both', critical: true },
+          { name: 'Mixture', detail: 'Pull OFF', critical: true },
+          { name: 'Starter', detail: 'Engage until engine fires', critical: true },
+          { name: 'Mixture', detail: 'Move full rich', critical: true },
+          { name: 'Mixture guard', detail: 'Installed', critical: true },
+          { name: 'Starter-On light', detail: 'Out', critical: true },
+          { name: 'Set engine RPM', detail: '50 to 60%', critical: true },
+          { name: 'Clutch switch', detail: 'Engaged', critical: true },
+          { name: 'Blades turning', detail: 'Less than 5 seconds', critical: true },
+          { name: 'Alternator switch', detail: 'ON', critical: true },
+          { name: 'Oil pressure within 30 seconds', detail: '25 psi minimum', critical: true },
+          { name: 'Avionics, headsets', detail: 'ON', critical: false },
+          { name: 'Kalibreren kunstmatige horizon', detail: 'Extra punt t.o.v. standaard POH checklist', critical: false },
+          { name: 'Annunciator panel test (if equipped)', detail: 'All lights on', critical: false },
+          { name: 'Audio alert (if equipped)', detail: 'Test', critical: false },
+          { name: 'Wait for clutch light out', detail: 'Circuit breakers in', critical: true },
+          { name: 'Warm-up RPM', detail: '60 to 70%', critical: true },
+          { name: 'Engine gages', detail: 'Green', critical: true },
+          { name: 'Mag drop at 75% RPM', detail: '7% max in 2 seconds', critical: true },
+          { name: 'Sprag clutch check', detail: 'Needles split', critical: true },
+          { name: 'Doors (if installed)', detail: 'Closed and latched', critical: false },
+          { name: 'Limit MAP chart', detail: 'Check', critical: true },
+          { name: 'Cyclic/collective friction', detail: 'OFF', critical: true },
+          { name: 'Hydraulic system', detail: 'Check', critical: true },
+          { name: 'Governor ON, increase throttle', detail: 'RPM 101-102%', critical: true },
+          { name: 'Warning lights', detail: 'Out', critical: true },
+          { name: 'Lift collective slightly, reduce RPM', detail: 'Horn/Light at 97%', critical: true },
+        ]
+      },
+      {
+        name: 'Voor Vertrek — Communicatie & Navigatie', icon: '📻',
+        items: [
+          { name: 'Radiocommunicatie opzetten — indien nodig klaringen vragen', detail: 'ATIS, GND, TWR, APP ingevoerd en gecontroleerd', critical: true },
+          { name: 'Transponder aanzetten', detail: 'Squawk code per ATC of 7000 VFR instellen. Transponder op ALT (Mode C) zetten voor liftoff.', critical: true },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'landing', name: 'Shutdown', icon: '🛬',
+    groups: [
+      {
+        name: 'Shutdown Procedure (POH R44 Raven II)', icon: '🔒',
+        items: [
+          { name: 'Collective down, RPM 60-70%', detail: 'Friction ON', critical: true },
+          { name: 'Cyclic and pedals neutral', detail: 'Friction ON', critical: true, triggersCountdown: 'cd0' },
+          { name: 'CHT drop (wacht minimum 2 minuten)', detail: 'Visuele check: CHT moet dalen.', critical: true, countdown: { id: 'cd0', seconds: 120, next: 'Close throttle' } },
+          { name: 'Throttle closed', detail: '', critical: true },
+          { name: 'Clutch switch', detail: 'Disengage', critical: true, triggersCountdown: 'cd1' },
+          { name: 'Mixture OFF', detail: '', critical: true, countdown: { id: 'cd1', seconds: 30, next: 'Mixture OFF' }, triggersCountdown: 'cd2' },
+          { name: 'Apply rotor brake', detail: 'Pas aanleggen na 30 seconden', critical: true, countdown: { id: 'cd2', seconds: 30, next: 'Rotor brake' } },
+          { name: 'Clutch light', detail: 'Extinguishes', critical: true },
+          { name: 'Avionics, alt, battery, and ignition switches', detail: 'OFF', critical: true },
+          { name: 'Eindstand collective klok noteren', detail: 'Noteer de eindstand voor het logboek', critical: false, inputField: { id: 'collective_end', label: 'Eindstand', unit: 'uur' } },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'postflight', name: 'Post-Flight', icon: '✅',
+    groups: [
+      {
+        name: 'Post-Flight Afhandeling', icon: '📋',
+        items: [
+          { name: 'Helikopterlogboek invullen', detail: 'Vluchttijd, brandstof, motortijd, collective klok, opmerkingen — op papier of via app', critical: true,
+            links: [{ label: 'FlightApp', url: 'https://play.google.com/store/apps/details?id=eu.unipage.flightapp' }] },
+          { name: 'Pilotenlogboek invullen', detail: 'Vluchttijd, type, registratie, vertrek/bestemming, opmerkingen — op papier of via app', critical: true,
+            links: [{ label: 'FlightApp', url: 'https://play.google.com/store/apps/details?id=eu.unipage.flightapp' }] },
+          { name: 'Debriefing Toran (eventueel met instructeur)', detail: 'Bespreek de vlucht, meld anomalieën en technische bijzonderheden aan de school', critical: false },
+        ]
+      }
+    ]
+  }
+];
+
+let state = {};
+let activePhase = 0;
+let collectiveValues = {};
+
+function saveCollectiveValue(id, val) {
+  collectiveValues[id] = val;
+  try { localStorage.setItem('toran_collective', JSON.stringify(collectiveValues)); } catch(e) {}
+  // Refresh post-flight summary if visible
+  const pfSummary = document.querySelector('.flight-summary');
+  if (pfSummary) pfSummary.outerHTML = buildFlightSummary();
+}
+
+function loadCollectiveValues() {
+  try {
+    const v = localStorage.getItem('toran_collective');
+    if (v) collectiveValues = JSON.parse(v);
+  } catch(e) {}
+}
+
+function initState() {
+  PHASES.forEach(phase => {
+    phase.groups.forEach(group => {
+      group.items.forEach((item, i) => {
+        const key = `${phase.id}_${i}_${group.name.slice(0,8)}`;
+        if (!(key in state)) state[key] = false;
+      });
+    });
+  });
+}
+
+function getKey(phaseId, groupName, i) {
+  return `${phaseId}_${i}_${groupName.slice(0,8)}`;
+}
+
+function saveState() {
+  try {
+    localStorage.setItem('toran_r44_state', JSON.stringify(state));
+  } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const s = localStorage.getItem('toran_r44_state');
+    if (s) state = JSON.parse(s);
+  } catch(e) {}
+}
+
+function resetAll() {
+  if (!confirm('Alle vinkjes wissen en opnieuw beginnen?')) return;
+  state = {};
+  initState();
+  saveState();
+  // Reset engine timer
+  engineRunning = false;
+  engineStartTime = null;
+  engineElapsed = 0;
+  engineStartZulu = '';
+  engineStopZulu = '';
+  clearInterval(engineInterval);
+  try {
+    localStorage.removeItem('toran_engine_elapsed');
+    localStorage.removeItem('toran_engine_start');
+    localStorage.removeItem('toran_engine_start_zulu');
+    localStorage.removeItem('toran_engine_stop_zulu');
+  } catch(e) {}
+  document.getElementById('engineTimerBtn').textContent = '▶ START';
+  document.getElementById('engineTimer').classList.remove('running');
+  document.getElementById('engineTimerDisplay').textContent = '00:00';
+  collectiveValues = {};
+  try { localStorage.removeItem('toran_collective'); } catch(e) {}
+  render();
+}
+
+const ENGINE_START_KEY = 'startup_6_Starting';
+const ENGINE_STOP_KEY = 'landing_5_Shutdown';
+
+function toggleItem(key) {
+  state[key] = !state[key];
+  saveState();
+  const el = document.getElementById('item_' + key);
+  if (el) {
+    el.className = itemClass(key, el.dataset.critical === '1');
+    el.querySelector('.checkbox').textContent = state[key] ? '✓' : '';
+  }
+
+  // Auto-start engine timer when Starter item is checked
+  if (key === ENGINE_START_KEY) {
+    if (state[key] && !engineRunning) {
+      engineElapsed = 0;
+      engineStartTime = Date.now();
+      engineRunning = true;
+      const startZulu = new Date(engineStartTime);
+      engineStartZulu = String(startZulu.getUTCHours()).padStart(2,'0') + ':' + String(startZulu.getUTCMinutes()).padStart(2,'0') + 'Z';
+      try { localStorage.setItem('toran_engine_start', engineStartTime); localStorage.setItem('toran_engine_start_zulu', engineStartZulu); } catch(e) {}
+      clearInterval(engineInterval);
+      engineInterval = setInterval(updateEngineDisplay, 1000);
+      document.getElementById('engineTimerBtn').textContent = '⏹ STOP';
+      document.getElementById('engineTimer').classList.add('running');
+      // Make sure timer is visible
+      document.getElementById('engineTimer').style.display = 'flex';
+    } else if (!state[key] && engineRunning) {
+      // If unchecked, stop timer
+      engineElapsed += Math.floor((Date.now() - engineStartTime) / 1000);
+      engineRunning = false;
+      engineStartTime = null;
+      clearInterval(engineInterval);
+      try { localStorage.setItem('toran_engine_elapsed', engineElapsed); localStorage.removeItem('toran_engine_start'); } catch(e) {}
+      document.getElementById('engineTimerBtn').textContent = '▶ START';
+      document.getElementById('engineTimer').classList.remove('running');
+    }
+  }
+
+  // Auto-trigger countdown when item with triggersCountdown is checked
+  const phase = PHASES.find(p => p.groups.some(g => g.items.some((it, i) => getKey(p.id, g.name, i) === key)));
+  if (phase) {
+    phase.groups.forEach(g => {
+      g.items.forEach((it, i) => {
+        if (getKey(phase.id, g.name, i) === key && it.triggersCountdown && state[key]) {
+          // Small delay so the UI updates first
+          setTimeout(() => autoStartCountdown(it.triggersCountdown), 300);
+        }
+      });
+    });
+  }
+
+  // Auto-stop engine timer when Mixture OFF (shutdown) is checked
+  if (key === ENGINE_STOP_KEY && state[key] && engineRunning) {
+    engineElapsed += Math.floor((Date.now() - engineStartTime) / 1000);
+    engineRunning = false;
+    const stopZuluNow = new Date();
+    engineStopZulu = String(stopZuluNow.getUTCHours()).padStart(2,'0') + ':' + String(stopZuluNow.getUTCMinutes()).padStart(2,'0') + 'Z';
+    engineStartTime = null;
+    clearInterval(engineInterval);
+    try { localStorage.setItem('toran_engine_elapsed', engineElapsed); localStorage.setItem('toran_engine_stop_zulu', engineStopZulu); localStorage.removeItem('toran_engine_start'); } catch(e) {}
+    document.getElementById('engineTimerBtn').textContent = '▶ HERSTART';
+    document.getElementById('engineTimer').classList.remove('running');
+    updateEngineDisplay();
+    const m = Math.floor(engineElapsed / 60);
+    const s = engineElapsed % 60;
+    alert('Motor stilgelegd.\nMotortijd: ' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0') + ' (' + m + ' min ' + s + ' sec)\n\nDit wordt ook weergegeven bij Post-Flight.');
+    const pfSummary = document.querySelector('.flight-summary');
+    if (pfSummary) pfSummary.outerHTML = buildFlightSummary();
+  }
+
+  updateStats();
+}
+
+function itemClass(key, critical) {
+  let cls = 'item';
+  if (critical) cls += ' critical';
+  if (state[key]) cls += ' checked';
+  return cls;
+}
+
+const GONOGO_PHASES = ['pre', 'walkaround', 'startup'];
+
+function getStats() {
+  let total = 0, done = 0, critLeft = 0;
+  PHASES.forEach(phase => {
+    phase.groups.forEach(group => {
+      group.items.forEach((item, i) => {
+        const key = getKey(phase.id, group.name, i);
+        total++;
+        if (state[key]) done++;
+        // Only count critical items for GO/NO-GO up to and including startup
+        else if (item.critical && GONOGO_PHASES.includes(phase.id)) critLeft++;
+      });
+    });
+  });
+  return { total, done, critLeft };
+}
+
+function getPhaseStats(phase) {
+  let total = 0, done = 0;
+  phase.groups.forEach(group => {
+    group.items.forEach((item, i) => {
+      const key = getKey(phase.id, group.name, i);
+      total++;
+      if (state[key]) done++;
+    });
+  });
+  return { total, done };
+}
+
+function updateStats() {
+  const { total, done, critLeft } = getStats();
+  const pct = total > 0 ? Math.round(done / total * 100) : 0;
+
+  document.getElementById('mainBar').style.width = pct + '%';
+  document.getElementById('mainPct').textContent = pct + '%';
+  document.getElementById('statDone').textContent = done;
+  document.getElementById('statLeft').textContent = total - done;
+  document.getElementById('statCrit').textContent = critLeft;
+  document.getElementById('statTotal').textContent = total;
+
+  const bar = document.getElementById('gonogoBar');
+  if (critLeft === 0) {
+    bar.className = 'status-pill go';
+    bar.textContent = 'GO ✓';
+  } else {
+    bar.className = 'status-pill';
+    bar.textContent = 'NO-GO';
+  }
+
+  // Shutdown status: all critical items in startup must be done first, then check shutdown
+  const startupPhase = PHASES.find(p => p.id === 'startup');
+  const startupCritLeft = startupPhase ? startupPhase.groups.reduce((acc, g) =>
+    acc + g.items.filter((it, i) => it.critical && !state[getKey('startup', g.name, i)]).length, 0) : 1;
+
+  const shutdownPhase = PHASES.find(p => p.id === 'landing');
+  const shutdownBar = document.getElementById('shutdownBar');
+  const shutdownSub = document.getElementById('shutdownSub');
+  if (shutdownBar) {
+    if (startupCritLeft > 0) {
+      shutdownBar.className = 'status-pill neutral';
+      shutdownBar.textContent = 'SHTD';
+    } else if (shutdownPhase) {
+      const sdCritLeft = shutdownPhase.groups.reduce((acc, g) =>
+        acc + g.items.filter((it, i) => it.critical && !state[getKey('landing', g.name, i)]).length, 0);
+      shutdownBar.className = sdCritLeft === 0 ? 'status-pill go' : 'status-pill';
+      shutdownBar.textContent = sdCritLeft === 0 ? 'SHTD ✓' : 'SHTD';
+    }
+  }
+
+  // Flight close status: all of shutdown done + all of post-flight done
+  const postFlightPhase = PHASES.find(p => p.id === 'postflight');
+  const flightBar = document.getElementById('flightBar');
+  const flightSub = document.getElementById('flightSub');
+  if (flightBar && shutdownPhase && postFlightPhase) {
+    const sdAllDone = shutdownPhase.groups.every(g =>
+      g.items.every((it, i) => state[getKey('landing', g.name, i)]));
+    const pfAllDone = postFlightPhase.groups.every(g =>
+      g.items.every((it, i) => state[getKey('postflight', g.name, i)]));
+    const pfDone = postFlightPhase.groups.reduce((acc, g) =>
+      acc + g.items.filter((it, i) => state[getKey('postflight', g.name, i)]).length, 0);
+    const pfTotal = postFlightPhase.groups.reduce((acc, g) => acc + g.items.length, 0);
+
+    if (!sdAllDone) {
+      flightBar.className = 'status-pill neutral';
+      flightBar.textContent = 'AFR';
+    } else if (pfAllDone) {
+      flightBar.className = 'status-pill go';
+      flightBar.textContent = 'AFR ✓';
+    } else {
+      flightBar.className = 'status-pill';
+      flightBar.textContent = 'AFR';
+    }
+  }
+
+  // Update phase tab badges
+  PHASES.forEach((phase, idx) => {
+    const s = getPhaseStats(phase);
+    const badge = document.querySelector(`#tab_${idx} .phase-badge`);
+    if (badge) {
+      badge.textContent = `${s.done}/${s.total}`;
+      if (s.done === s.total) badge.className = 'phase-badge done';
+      else if (s.done > 0) badge.className = 'phase-badge warn';
+      else badge.className = 'phase-badge';
+    }
+  });
+}
+
+function switchPhase(idx) {
+  activePhase = idx;
+  document.querySelectorAll('.phase-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+  document.querySelectorAll('.phase-content').forEach((c, i) => c.classList.toggle('active', i === idx));
+  const tab = document.getElementById('tab_' + idx);
+  if (tab) tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  showEngineTimer(PHASES[idx].id);
+}
+
+// Engine timer state
+let engineRunning = false;
+let engineStartTime = null;
+let engineElapsed = 0;
+let engineInterval = null;
+let engineStartZulu = '';
+let engineStopZulu = '';
+
+function toggleEngineTimer() {
+  if (!engineRunning) {
+    engineStartTime = Date.now();
+    engineRunning = true;
+    try { localStorage.setItem('toran_engine_start', engineStartTime); } catch(e) {}
+    engineInterval = setInterval(updateEngineDisplay, 1000);
+    document.getElementById('engineTimerBtn').textContent = '⏹ STOP';
+    document.getElementById('engineTimer').classList.add('running');
+  } else {
+    engineElapsed += Math.floor((Date.now() - engineStartTime) / 1000);
+    engineRunning = false;
+    engineStartTime = null;
+    clearInterval(engineInterval);
+    try {
+      localStorage.setItem('toran_engine_elapsed', engineElapsed);
+      localStorage.removeItem('toran_engine_start');
+    } catch(e) {}
+    document.getElementById('engineTimerBtn').textContent = '▶ HERSTART';
+    document.getElementById('engineTimer').classList.remove('running');
+    // Show elapsed time clearly
+    const m = Math.floor(engineElapsed / 60);
+    const s = engineElapsed % 60;
+    alert(`Motortijd: ${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')} (${m} min ${s} sec)
+Noteer dit in je logboek.`);
+  }
+}
+
+function updateEngineDisplay() {
+  const total = engineElapsed + (engineRunning ? Math.floor((Date.now() - engineStartTime) / 1000) : 0);
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  document.getElementById('engineTimerDisplay').textContent =
+    String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+
+function loadEngineTimer() {
+  try {
+    engineStartZulu = localStorage.getItem('toran_engine_start_zulu') || '';
+    engineStopZulu = localStorage.getItem('toran_engine_stop_zulu') || '';
+    const elapsed = parseInt(localStorage.getItem('toran_engine_elapsed') || '0');
+    const start = parseInt(localStorage.getItem('toran_engine_start') || '0');
+    if (start) {
+      // Was running, resume
+      engineElapsed = elapsed;
+      engineStartTime = start;
+      engineRunning = true;
+      engineInterval = setInterval(updateEngineDisplay, 1000);
+      document.getElementById('engineTimerBtn').textContent = '⏹ STOP';
+      document.getElementById('engineTimer').classList.add('running');
+    } else if (elapsed) {
+      engineElapsed = elapsed;
+    }
+    updateEngineDisplay();
+  } catch(e) {}
+}
+
+function showEngineTimer(phaseId) {
+  document.getElementById('engineTimer').style.display = 'none';
+}
+
+function checkAllPhase(phaseIdx) {
+  const phase = PHASES[phaseIdx];
+  const s = getPhaseStats(phase);
+  const allDone = s.done === s.total;
+  phase.groups.forEach(group => {
+    group.items.forEach((item, i) => {
+      const key = getKey(phase.id, group.name, i);
+      state[key] = !allDone;
+      const el = document.getElementById('item_' + key);
+      if (el) {
+        el.className = itemClass(key, el.dataset.critical === '1');
+        el.querySelector('.checkbox').textContent = !allDone ? '✓' : '';
+      }
+    });
+  });
+  saveState();
+  updateStats();
+  // Update check-all button text
+  const btn = document.getElementById('checkall_' + phaseIdx);
+  if (btn) {
+    const newS = getPhaseStats(phase);
+    btn.textContent = newS.done === newS.total ? '↩ Alles uitvinken' : '✓ Alles afvinken';
+    btn.className = newS.done === newS.total ? 'check-all-btn uncheck' : 'check-all-btn';
+  }
+}
+
+function render() {
+  const tabsEl = document.getElementById('phaseTabs');
+  const contentsEl = document.getElementById('phaseContents');
+  tabsEl.innerHTML = '';
+  contentsEl.innerHTML = '';
+
+  PHASES.forEach((phase, phaseIdx) => {
+    const s = getPhaseStats(phase);
+
+    // Tab
+    const tab = document.createElement('div');
+    tab.className = 'phase-tab' + (phaseIdx === activePhase ? ' active' : '');
+    tab.id = 'tab_' + phaseIdx;
+    tab.innerHTML = `${phase.icon} ${phase.name} <span class="phase-badge">${s.done}/${s.total}</span>`;
+    tab.onclick = () => switchPhase(phaseIdx);
+    tabsEl.appendChild(tab);
+
+    // Content
+    const content = document.createElement('div');
+    content.className = 'phase-content' + (phaseIdx === activePhase ? ' active' : '');
+
+    const allDone = s.done === s.total;
+    let html = `<button id="checkall_${phaseIdx}" class="check-all-btn ${allDone ? 'uncheck' : ''}" onclick="checkAllPhase(${phaseIdx})">
+      ${allDone ? '↩ Alles uitvinken' : '✓ Alles afvinken'}
+    </button>`;
+    if (phase.id === 'postflight') {
+      html += buildFlightSummary();
+    }
+
+    phase.groups.forEach(group => {
+      let gDone = 0;
+      group.items.forEach((item, i) => { if (state[getKey(phase.id, group.name, i)]) gDone++; });
+
+      html += `<div class="checklist-group">
+        <div class="group-header">
+          <span>${group.icon}</span>
+          <span class="group-name">${group.name}</span>
+          <span class="group-count">${gDone}/${group.items.length}</span>
+        </div>`;
+
+      group.items.forEach((item, i) => {
+        const key = getKey(phase.id, group.name, i);
+        const tag = item.critical ? '<span class="item-critical-tag">KRITIEK</span>' : '';
+        const links = item.links ? item.links.map(l =>
+          `<a class="item-link" href="${l.url}" target="_blank" onclick="event.stopPropagation()">🔗 ${l.label}</a>`
+        ).join('') : '';
+        const linksHtml = links ? `<div class="item-links">${links}</div>` : '';
+        const inputHtml = item.inputField ? `
+          <div class="item-input-row" onclick="event.stopPropagation()">
+            <span class="item-input-label">${item.inputField.label}:</span>
+            <input class="item-input-field" type="number" step="0.1" min="0"
+              id="input_${item.inputField.id}"
+              placeholder="0.0"
+              value="${collectiveValues[item.inputField.id] || ''}"
+              oninput="saveCollectiveValue('${item.inputField.id}', this.value)"
+            />
+            <span class="item-input-unit">${item.inputField.unit}</span>
+          </div>` : '';
+        const cdHtml = item.countdown ? `
+          <div class="item-countdown" id="cdbox_${item.countdown.id}" onclick="event.stopPropagation()">
+            <span class="countdown-time" id="cdtime_${item.countdown.id}">${item.countdown.seconds >= 60 ? Math.floor(item.countdown.seconds/60) + ':00' : '0:' + String(item.countdown.seconds).padStart(2,'0')}</span>
+            <span class="countdown-label" id="cdlabel_${item.countdown.id}">Start automatisch na vorige stap</span>
+          </div>` : '';
+        html += `
+          <div class="${itemClass(key, item.critical)}" id="item_${key}" data-critical="${item.critical ? 1 : 0}" onclick="toggleItem('${key}')">
+            <div class="checkbox">${state[key] ? '✓' : ''}</div>
+            <div class="item-body">
+              <div class="item-name">${item.name}</div>
+              <div class="item-detail">${item.detail}</div>
+              ${tag}
+              ${linksHtml}
+              ${inputHtml}
+              ${cdHtml}
+            </div>
+          </div>`;
+      });
+      html += `</div>`;
+    });
+
+    content.innerHTML = html;
+    contentsEl.appendChild(content);
+
+  });
+
+  updateStats();
+}
+
+// Countdown timers
+const countdownState = {};
+
+function getEngineTimeStr() {
+  const total = engineElapsed;
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  if (h > 0) return `${h}u ${String(m).padStart(2,'0')}min ${String(s).padStart(2,'0')}s`;
+  return `${m} min ${String(s).padStart(2,'0')} sec`;
+}
+
+function buildFlightSummary() {
+  const total = engineElapsed;
+  if (total === 0) {
+    return `<div class="flight-summary">
+      <div class="flight-summary-title">✈️ Vluchtoverzicht</div>
+      <div class="flight-summary-empty">Nog geen motortijd geregistreerd.<br>Start de vlucht via het tabblad Start &amp; Run-Up.</div>
+    </div>`;
+  }
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  const timeStr = h > 0
+    ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`
+    : `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('nl-BE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+    // Zulu times
+  const startZ = engineStartZulu || '—';
+  const stopZ = engineStopZulu || '—';
+  // Fuel and oil
+  const fuelAdded = collectiveValues['fuel_added'] ? collectiveValues['fuel_added'] + ' L' : '—';
+  const oilAdded = collectiveValues['oil_added'] ? collectiveValues['oil_added'] + ' qt' : '—';
+  // Collective time calculation
+  const cStart = parseFloat(collectiveValues['collective_start'] || '');
+  const cEnd = parseFloat(collectiveValues['collective_end'] || '');
+  const hasBoth = !isNaN(cStart) && !isNaN(cEnd);
+  const cDiff = hasBoth ? Math.round((cEnd - cStart) * 10) / 10 : null;
+  const collectiveRow = hasBoth
+    ? `<div class="flight-summary-row">
+        <span class="flight-summary-label">Beginstand collective</span>
+        <span class="flight-summary-value">${cStart.toFixed(1)} u</span>
+       </div>
+       <div class="flight-summary-row">
+        <span class="flight-summary-label">Eindstand collective</span>
+        <span class="flight-summary-value">${cEnd.toFixed(1)} u</span>
+       </div>
+       <div class="flight-summary-row highlight">
+        <span class="flight-summary-label">Collective tijd</span>
+        <span class="flight-summary-value">${cDiff.toFixed(1)} u</span>
+       </div>`
+    : `<div class="flight-summary-row">
+        <span class="flight-summary-label">Collective tijd</span>
+        <span class="flight-summary-value" style="color:var(--text-dim);font-size:12px">Begin- of eindstand ontbreekt</span>
+       </div>`;
+
+  // Billing calculation (collective + 0.2u = +12 min, terug te tellen van motor stop Zulu)
+  let billingBlock = '';
+  if (hasBoth && engineStopZulu) {
+    const billTime = hasBoth ? Math.round((cDiff + 0.2) * 10) / 10 : null;
+    const billMinutes = Math.round(billTime * 60);
+    // Parse stop Zulu time
+    const [stopH, stopMRaw] = engineStopZulu.replace('Z','').split(':').map(Number);
+    const stopTotalMin = stopH * 60 + stopMRaw;
+    const startTotalMin = stopTotalMin - billMinutes;
+    const logStartH = Math.floor(((startTotalMin % 1440) + 1440) % 1440 / 60);
+    const logStartM = Math.floor(((startTotalMin % 1440) + 1440) % 1440 % 60);
+    const logEndH = stopH;
+    const logEndM = stopMRaw;
+    const logStartStr = String(logStartH).padStart(2,'0') + ':' + String(logStartM).padStart(2,'0') + 'Z';
+    const logEndStr = String(logEndH).padStart(2,'0') + ':' + String(logEndM).padStart(2,'0') + 'Z';
+    billingBlock = `
+      <div class="fs-card">
+        <div class="fs-card-title blue">📋 Logboek facturatie (Toran)</div>
+        <div class="flight-summary-row">
+          <span class="flight-summary-label">Collective tijd</span>
+          <span class="flight-summary-value">${cDiff.toFixed(1)} u</span>
+        </div>
+        <div class="flight-summary-row">
+          <span class="flight-summary-label">+ toeslag (2 × 0,1 u)</span>
+          <span class="flight-summary-value">+ 0,2 u</span>
+        </div>
+        <div class="flight-summary-row highlight">
+          <span class="flight-summary-label">Facturatietijd</span>
+          <span class="flight-summary-value">${billTime.toFixed(1)} u</span>
+        </div>
+        <div class="flight-summary-row">
+          <span class="flight-summary-label">Logboek starttijd</span>
+          <span class="flight-summary-value">${logStartStr}</span>
+        </div>
+        <div class="flight-summary-row highlight-green">
+          <span class="flight-summary-label">Logboek eindtijd</span>
+          <span class="flight-summary-value">${logEndStr}</span>
+        </div>
+      </div>`;
+  } else {
+    billingBlock = `
+      <div class="fs-card">
+        <div class="fs-card-title blue">📋 Logboek facturatie (Toran)</div>
+        <div class="flight-summary-row">
+          <span class="flight-summary-label" style="color:var(--text-dim);font-size:12px">Beschikbaar na invoer collective begin- en eindstand + motor stop Zulu</span>
+          <span></span>
+        </div>
+      </div>`;
+  }
+
+  return `<div class="flight-summary">
+
+    <div class="fs-card">
+      <div class="fs-card-title slate">✈️ Vlucht</div>
+      <div class="flight-summary-row">
+        <span class="flight-summary-label">Datum</span>
+        <span class="flight-summary-value">${dateStr}</span>
+      </div>
+      <div class="flight-summary-row">
+        <span class="flight-summary-label">Type</span>
+        <span class="flight-summary-value">R44 Raven II</span>
+      </div>
+      <div class="flight-summary-row">
+        <span class="flight-summary-label">School</span>
+        <span class="flight-summary-value">Toran</span>
+      </div>
+    </div>
+
+    <div class="fs-card">
+      <div class="fs-card-title slate">⏱ Motortijden</div>
+      <div class="flight-summary-row">
+        <span class="flight-summary-label">Motor start (Zulu)</span>
+        <span class="flight-summary-value">${startZ}</span>
+      </div>
+      <div class="flight-summary-row">
+        <span class="flight-summary-label">Motor stop (Zulu)</span>
+        <span class="flight-summary-value">${stopZ}</span>
+      </div>
+      <div class="flight-summary-row highlight">
+        <span class="flight-summary-label">Motortijd</span>
+        <span class="flight-summary-value">${timeStr}</span>
+      </div>
+    </div>
+
+    <div class="fs-card">
+      <div class="fs-card-title slate">🕐 Collective klok</div>
+      <div class="flight-summary-row">
+        <span class="flight-summary-label">Beginstand</span>
+        <span class="flight-summary-value">${isNaN(cStart) ? '—' : cStart.toFixed(1) + ' u'}</span>
+      </div>
+      <div class="flight-summary-row">
+        <span class="flight-summary-label">Eindstand</span>
+        <span class="flight-summary-value">${isNaN(cEnd) ? '—' : cEnd.toFixed(1) + ' u'}</span>
+      </div>
+      <div class="flight-summary-row highlight">
+        <span class="flight-summary-label">Collective tijd</span>
+        <span class="flight-summary-value">${hasBoth ? cDiff.toFixed(1) + ' u' : '—'}</span>
+      </div>
+    </div>
+
+    ${billingBlock}
+
+    <div class="fs-card">
+      <div class="fs-card-title slate">⛽ Verbruik</div>
+      <div class="flight-summary-row">
+        <span class="flight-summary-label">Brandstof bijgetankt</span>
+        <span class="flight-summary-value">${fuelAdded}</span>
+      </div>
+      <div class="flight-summary-row">
+        <span class="flight-summary-label">Olie bijgevuld</span>
+        <span class="flight-summary-value">${oilAdded}</span>
+      </div>
+    </div>
+
+    <div class="flight-summary-note">Noteer bovenstaande gegevens in het helikopter- en pilotenlogboek.</div>
+  </div>`;
+}
+
+function autoStartCountdown(id) {
+  // Find the countdown config from PHASES
+  let seconds = 30, nextAction = '';
+  PHASES.forEach(p => p.groups.forEach(g => g.items.forEach(it => {
+    if (it.countdown && it.countdown.id === id) {
+      seconds = it.countdown.seconds;
+      nextAction = it.countdown.next;
+    }
+  })));
+  startCountdown(id, seconds, nextAction);
+}
+
+function startCountdown(id, seconds, nextAction) {
+  if (countdownState[id] && countdownState[id].running) return;
+  const box = document.getElementById('cdbox_' + id);
+  const timeEl = document.getElementById('cdtime_' + id);
+  const labelEl = document.getElementById('cdlabel_' + id);
+  if (!box) return;
+
+  let remaining = seconds;
+  box.className = 'item-countdown running';
+  labelEl.textContent = 'Wachten...';
+
+  function fmt(s) { return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0'); }
+  timeEl.textContent = fmt(remaining);
+
+  countdownState[id] = { running: true };
+  const interval = setInterval(() => {
+    remaining--;
+    timeEl.textContent = fmt(remaining);
+    if (remaining <= 0) {
+      clearInterval(interval);
+      countdownState[id].running = false;
+      box.className = 'item-countdown done';
+      timeEl.textContent = '✓';
+      labelEl.textContent = nextAction + ' — klaar!';
+      if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+    }
+  }, 1000);
+}
+
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getUTCHours()).padStart(2, '0');
+  const m = String(now.getUTCMinutes()).padStart(2, '0');
+  const s = String(now.getUTCSeconds()).padStart(2, '0');
+  const el = document.getElementById('clock');
+  if (el) el.textContent = h + ':' + m + ':' + s + 'Z';
+}
+
+initState();
+loadState();
+loadCollectiveValues();
+render();
+loadEngineTimer();
+// engine timer bar hidden
+setTimeout(function() {
+  updateClock();
+  setInterval(updateClock, 1000);
+}, 100);
+
+// Register service worker for offline use
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
