@@ -444,6 +444,73 @@
 
 
 
+  /* ── GO POPUP ── */
+  .go-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.55);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .go-popup.show {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .go-popup-card {
+    background: white;
+    border-radius: 16px;
+    padding: 36px 40px;
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+    transform: scale(0.85);
+    transition: transform 0.3s ease;
+    max-width: 300px;
+    width: 85%;
+  }
+  .go-popup.show .go-popup-card {
+    transform: scale(1);
+  }
+  .go-popup-icon {
+    font-size: 64px;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .go-popup-title {
+    font-family: var(--sans);
+    font-weight: 900;
+    font-size: 48px;
+    color: #16803c;
+    letter-spacing: 4px;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+  .go-popup-sub {
+    font-family: var(--sans);
+    font-size: 15px;
+    color: #374151;
+    margin-bottom: 24px;
+    line-height: 1.4;
+  }
+  .go-popup-btn {
+    background: #16803c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 13px 32px;
+    cursor: pointer;
+    width: 100%;
+    letter-spacing: 0.5px;
+  }
+  .go-popup-btn:active { opacity: 0.85; }
+
   /* ── BOTTOM STATS BAR ── */
   .stats-bar {
     position: fixed;
@@ -513,6 +580,137 @@
     letter-spacing: 0.8px;
     text-transform: uppercase;
     margin-top: 3px;
+  }
+
+  /* Frequency table */
+  .freq-table {
+    margin-top: 10px;
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .freq-table-header {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .freq-table-header span {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-dim);
+  }
+  .freq-table-header .col-name { flex: 1.2; }
+  .freq-table-header .col-freq { flex: 1; }
+  .freq-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 5px;
+    align-items: center;
+  }
+  .freq-input-name {
+    flex: 1.2;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+    background: white;
+    border: 1px solid var(--border-strong);
+    border-radius: 5px;
+    padding: 7px 8px;
+    outline: none;
+    min-width: 0;
+  }
+  .freq-input-freq {
+    flex: 1;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+    background: white;
+    border: 1px solid var(--border-strong);
+    border-radius: 5px;
+    padding: 7px 8px;
+    outline: none;
+    min-width: 0;
+  }
+  .freq-input-name:focus, .freq-input-freq:focus { border-color: var(--accent); }
+  .freq-del-btn {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .freq-del-btn:active { color: var(--red); }
+  .freq-add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--panel2);
+    border: 1px dashed var(--border-strong);
+    border-radius: 5px;
+    padding: 6px 12px;
+    cursor: pointer;
+    width: 100%;
+    justify-content: center;
+  }
+  .freq-add-btn:active { background: var(--border); }
+
+  /* Reference display */
+  .item-notes-row { margin-top: 8px; }
+  .item-notes-label {
+    font-family: var(--sans);
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+    display: block;
+  }
+  .item-ref-box {
+    margin-top: 8px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .item-ref-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    color: white;
+    background: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 5px 10px;
+    display: block;
+  }
+  .item-ref-row {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+  }
+  .item-ref-row:last-child { border-bottom: none; }
+  .item-ref-name {
+    flex: 1.2;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-mid);
+    padding: 6px 10px;
+    border-right: 1px solid var(--border);
+    background: var(--panel2);
+    font-weight: 600;
+  }
+  .item-ref-freq {
+    flex: 1;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    padding: 6px 10px;
+    font-weight: 700;
   }
 
   /* Input fields on items */
@@ -700,6 +898,36 @@
 
 <div id="phaseContents"></div>
 
+<!-- Post-Flight Popup -->
+<div class="go-popup" id="postflightPopup" onclick="closePostflightPopup()">
+  <div class="go-popup-card" onclick="event.stopPropagation()">
+    <div class="go-popup-icon">🏁</div>
+    <div class="go-popup-title" style="font-size:36px;color:#f5a623;">VLUCHT<br>AFGEROND</div>
+    <div class="go-popup-sub">Alle post-flight items afgevinkt.<br>Goede vlucht gehad! ✈️</div>
+    <button class="go-popup-btn" style="background:#f5a623;" onclick="closePostflightPopup()">Afsluiten ✓</button>
+  </div>
+</div>
+
+<!-- Shutdown Popup -->
+<div class="go-popup" id="shutdownPopup" onclick="closeShutdownPopup()">
+  <div class="go-popup-card" onclick="event.stopPropagation()">
+    <div class="go-popup-icon">🔒</div>
+    <div class="go-popup-title" style="font-size:36px;color:#1e3a5f;">SHUTDOWN<br>OK</div>
+    <div class="go-popup-sub">Alle shutdown-items afgevinkt.<br>De heli mag verlaten worden!</div>
+    <button class="go-popup-btn" style="background:#1e3a5f;" onclick="closeShutdownPopup()">Begrepen ✓</button>
+  </div>
+</div>
+
+<!-- GO Popup -->
+<div class="go-popup" id="goPopup" onclick="closeGoPopup()">
+  <div class="go-popup-card" onclick="event.stopPropagation()">
+    <div class="go-popup-icon">🚁</div>
+    <div class="go-popup-title">GO!</div>
+    <div class="go-popup-sub">Alle kritieke items afgevinkt.<br>Klaar voor vertrek!</div>
+    <button class="go-popup-btn" onclick="closeGoPopup()">Laten we vliegen ✓</button>
+  </div>
+</div>
+
 <div class="stats-bar">
   <div class="stat-cell">
     <div class="stat-num green" id="statDone">0</div>
@@ -750,17 +978,17 @@ const PHASES = [
         name: 'Persoonlijke Voorbereiding', icon: '🧑‍✈️',
         items: [
           { name: 'Fit om te vliegen', detail: 'Uitgerust, geen ziekte, geen stress. Geen alcohol/drugs: wettelijk min. 8u bottle-to-throttle, aanbevolen 12u.', critical: true },
-          { name: 'Vliegbrevet geldig en mee', detail: 'Vervaldatum en categorie controleren', critical: true },
-          { name: 'Medische geschiktheid geldig en mee', detail: 'Class 1 of Class 2, vervaldatum nakijken', critical: true },
-          { name: 'Gepaste kledij, stevige schoenen en headset meenemen', detail: 'Geen open schoeisel, weerbestendige kledij. Fluohesje meenemen.', critical: true },
+          { name: 'Vliegbrevet', detail: 'Meenemen. Vervaldatum en categorie controleren.', critical: true },
+          { name: 'Medische geschiktheid', detail: 'Meenemen. Class 1 of Class 2, vervaldatum nakijken.', critical: true },
+          { name: 'Gepaste kledij en headset', detail: 'Geen open schoeisel, weerbestendige kledij. Fluohesje meenemen. Eventueel eigen headset meenemen.', critical: true },
         ]
       },
       {
         name: 'Administratie & Documenten', icon: '📄',
         items: [
-          { name: 'Verzekering R44 actueel', detail: 'Polisnummer en dekking nakijken', critical: true },
-          { name: 'Luchtwaardigheidsbewijs (CoA) geldig', detail: 'Aan boord aanwezig en niet vervallen', critical: true },
-          { name: 'Inschrijvingsbewijs aanwezig', detail: 'Registratiedocument van de helikopter aan boord', critical: true },
+          { name: 'Verzekering R44', detail: 'Polisnummer en dekking nakijken', critical: true },
+          { name: 'Luchtvaardigheidsbewijs (CoA)', detail: 'Aan boord aanwezig en niet vervallen', critical: true },
+          { name: 'Inschrijvingsbewijs', detail: 'Registratiedocument van de helikopter aan boord', critical: true },
           { name: 'Logboek bijgewerkt voor vertrek', detail: 'Vorige vlucht correct ingevuld, openstaande opmerkingen nakijken', critical: true,
             links: [{ label: 'FlightApp', url: 'https://play.google.com/store/apps/details?id=eu.unipage.flightapp' }] },
           { name: 'Toran briefing (met instructeur)', detail: 'Route, bijzonderheden, verwachte retour', critical: false },
@@ -789,29 +1017,29 @@ const PHASES = [
       {
         name: 'Weerbriefing', icon: '🌤️',
         items: [
-          { name: 'METAR & TAF gecheckt voor vertrek en bestemming', detail: 'Wind, zicht, wolkenbasis, temperatuur, QNH', critical: true,
+          { name: 'METAR en TAF nagaan', detail: 'Voor vertrek, en route en bestemming controleren', critical: true,
             links: [
               { label: 'AeroWetter', url: 'https://www.aerowetter.de' },
               { label: 'Skeyes MET', url: 'https://ops.skeyes.be' }
             ] },
-          { name: 'Windcheck op hoogte (route)', detail: 'Wind op kruishoogte, thermiek, turbulentie', critical: true,
+          { name: 'Windcheck op hoogte', detail: 'Wind controleren op gekozen vlieghoogte', critical: true,
             links: [
               { label: 'Windy', url: 'https://www.windy.com' },
               { label: 'AeroWetter', url: 'https://www.aerowetter.de' }
             ] },
-          { name: 'Zicht en wolkenbasis voldoende voor VFR', detail: 'VFR minima: zicht > 5 km, wolkenbasis > 1500 ft', critical: true },
+          { name: 'Zicht en wolkenbasis voldoende', detail: 'VFR minima: zicht > 5 km, wolkenbasis > 1500 ft', critical: true },
         ]
       },
       {
         name: 'Communicatievoorbereiding', icon: '📻',
         items: [
-          { name: 'Alle radiofrequenties opgezocht, genoteerd en overschakelpunten ingeschat', detail: 'ATIS, GND, TWR, APP, ACC voor vertrek, route en bestemming. Markeer overschakelpunten op kaart of in SkyDemon.', critical: true,
+          { name: 'Radiofrequenties opgezocht en genoteerd', detail: 'ATIS, GND, TWR, APP, ACC voor vertrek, route en bestemming. Overschakelpunten markeren. Noodfrequentie 121.5 MHz altijd gekend.', critical: true,
             links: [
               { label: 'Skeyes AIP', url: 'https://ops.skeyes.be/' },
               { label: 'SkyDemon', url: 'https://play.google.com/store/apps/details?id=aero.skydemon.skydemonandroid' }
-            ] },
+            ],
+            notesField: { id: 'radio_freq', label: 'Frequenties noteren' } },
           { name: 'ATIS beluisterd (indien van toepassing)', detail: 'Weersbericht, actieve baan, QNH noteren', critical: false },
-          { name: 'Noodfrequentie 121.5 MHz gekend', detail: 'Internationaal noodkanaal, altijd in gedachten houden', critical: false },
           { name: 'Squawk codes genoteerd (indien van toepassing)', detail: 'Algemeen: 7000 VFR standaard · 2000 ATS · 5101 frequency monitoring. Nood: 7700 nood · 7600 radiostoring · 7500 kaping', critical: false },
         ]
       },
@@ -853,11 +1081,11 @@ const PHASES = [
         items: [
           { name: 'Check waarschuwingslampjes', detail: 'Alle annunciator lights controleren bij inschakelen master', critical: true },
           { name: 'Beginstand collective klok noteren', detail: '', critical: true, inputField: { id: 'collective_start', label: 'Beginstand', unit: 'uur' } },
-          { name: 'SkyDemon app gereed en route geladen', detail: 'Databases en kaartcycli bijgewerkt, route actief', critical: false,
-            links: [{ label: 'SkyDemon', url: 'https://play.google.com/store/apps/details?id=aero.skydemon.skydemonandroid' }] },
           { name: 'Headset aangesloten', detail: '', critical: true },
           { name: 'Pedalen afgesteld', detail: '', critical: true },
-          { name: 'Radiofrequenties programmeren (indien nodig)', detail: '', critical: false },
+          { name: 'SkyDemon app gereed en route geladen', detail: 'Databases en kaartcycli bijgewerkt, route actief', critical: false,
+            links: [{ label: 'SkyDemon', url: 'https://play.google.com/store/apps/details?id=aero.skydemon.skydemonandroid' }] },
+          { name: 'Radiofrequenties programmeren (indien nodig)', detail: '', critical: false, refField: { id: 'radio_freq', label: 'Genoteerde frequenties' } },
         ]
       }
     ]
@@ -970,6 +1198,77 @@ const PHASES = [
 let state = {};
 let activePhase = 0;
 let collectiveValues = {};
+let notesValues = {};
+const DEFAULT_FREQS = [{"name": "Kortrijk Info", "freq": "120.255"}, {"name": "Brussels Info", "freq": "126.900"}];
+
+function getFreqs() {
+  return notesValues['radio_freq'] || JSON.parse(JSON.stringify(DEFAULT_FREQS));
+}
+
+function saveFreqs(freqs) {
+  notesValues['radio_freq'] = freqs;
+  try { localStorage.setItem('toran_notes', JSON.stringify(notesValues)); } catch(e) {}
+  refreshRefBoxes();
+}
+
+function refreshRefBoxes() {
+  const freqs = getFreqs();
+  document.querySelectorAll('.item-ref-box[data-ref="radio_freq"]').forEach(box => {
+    box.innerHTML = freqs.map(f =>
+      `<div class="item-ref-row"><div class="item-ref-name">${f.name||'—'}</div><div class="item-ref-freq">${f.freq||'—'}</div></div>`
+    ).join('') || '<div style="padding:8px 10px;color:var(--text-dim);font-size:12px;">Geen frequenties ingevoerd</div>';
+  });
+}
+
+function updateFreqRow(idx, field, val) {
+  const freqs = getFreqs();
+  freqs[idx][field] = val;
+  saveFreqs(freqs);
+}
+
+function addFreqRow() {
+  const freqs = getFreqs();
+  freqs.push({name: '', freq: ''});
+  saveFreqs(freqs);
+  renderFreqTable();
+}
+
+function deleteFreqRow(idx) {
+  const freqs = getFreqs();
+  freqs.splice(idx, 1);
+  saveFreqs(freqs);
+  renderFreqTable();
+}
+
+function renderFreqTable() {
+  const container = document.getElementById('freqTableContainer');
+  if (!container) return;
+  const freqs = getFreqs();
+  let html = `<div class="freq-table-header"><span class="col-name">Naam / Station</span><span class="col-freq">Frequentie</span><span style="width:24px"></span></div>`;
+  freqs.forEach((f, i) => {
+    html += `<div class="freq-row">
+      <input class="freq-input-name" type="text" placeholder="bv. EBKT TWR" value="${f.name||''}"
+        oninput="updateFreqRow(${i},'name',this.value)" onclick="event.stopPropagation()">
+      <input class="freq-input-freq" type="text" placeholder="bv. 120.475" value="${f.freq||''}"
+        oninput="updateFreqRow(${i},'freq',this.value)" onclick="event.stopPropagation()">
+      <button class="freq-del-btn" onclick="deleteFreqRow(${i});event.stopPropagation()">×</button>
+    </div>`;
+  });
+  html += `<button class="freq-add-btn" onclick="addFreqRow();event.stopPropagation()">+ Frequentie toevoegen</button>`;
+  container.innerHTML = html;
+}
+
+function saveNotesValue(id, val) {
+  notesValues[id] = val;
+  try { localStorage.setItem('toran_notes', JSON.stringify(notesValues)); } catch(e) {}
+}
+
+function loadNotesValues() {
+  try {
+    const v = localStorage.getItem('toran_notes');
+    if (v) notesValues = JSON.parse(v);
+  } catch(e) {}
+}
 
 function saveCollectiveValue(id, val) {
   collectiveValues[id] = val;
@@ -1036,7 +1335,8 @@ function resetAll() {
   document.getElementById('engineTimer').classList.remove('running');
   document.getElementById('engineTimerDisplay').textContent = '00:00';
   collectiveValues = {};
-  try { localStorage.removeItem('toran_collective'); } catch(e) {}
+  notesValues = {};
+  try { localStorage.removeItem('toran_collective'); localStorage.removeItem('toran_notes'); } catch(e) {}
   render();
 }
 
@@ -1160,59 +1460,55 @@ function updateStats() {
   document.getElementById('statDone').textContent = done;
   document.getElementById('statLeft').textContent = total - done;
   document.getElementById('statCrit').textContent = critLeft;
-  document.getElementById('statTotal').textContent = total;
+  const stEl = document.getElementById('statTotal');
+  if (stEl) stEl.textContent = total;
 
-  const bar = document.getElementById('gonogoBar');
-  if (critLeft === 0) {
-    bar.className = 'status-pill go';
-    bar.textContent = 'GO ✓';
-  } else {
-    bar.className = 'status-pill';
-    bar.textContent = 'NO-GO';
-  }
+  // Single evolving status block
+  const statusBlock = document.getElementById('statusBlock');
+  const statusBlockSub = document.getElementById('statusBlockSub');
 
-  // Shutdown status: all critical items in startup must be done first, then check shutdown
-  const startupPhase = PHASES.find(p => p.id === 'startup');
-  const startupCritLeft = startupPhase ? startupPhase.groups.reduce((acc, g) =>
-    acc + g.items.filter((it, i) => it.critical && !state[getKey('startup', g.name, i)]).length, 0) : 1;
+  // Check if all critical items in pre, walkaround, startup are done
+  const goPhases = ['pre', 'walkaround', 'startup'];
+  const goGo = goPhases.every(pid => {
+    const ph = PHASES.find(p => p.id === pid);
+    if (!ph) return true;
+    return ph.groups.every(g => g.items.every((it, i) => !it.critical || state[getKey(pid, g.name, i)]));
+  });
 
-  const shutdownPhase = PHASES.find(p => p.id === 'landing');
-  const shutdownBar = document.getElementById('shutdownBar');
-  const shutdownSub = document.getElementById('shutdownSub');
-  if (shutdownBar) {
-    if (startupCritLeft > 0) {
-      shutdownBar.className = 'status-pill neutral';
-      shutdownBar.textContent = 'SHTD';
-    } else if (shutdownPhase) {
-      const sdCritLeft = shutdownPhase.groups.reduce((acc, g) =>
-        acc + g.items.filter((it, i) => it.critical && !state[getKey('landing', g.name, i)]).length, 0);
-      shutdownBar.className = sdCritLeft === 0 ? 'status-pill go' : 'status-pill';
-      shutdownBar.textContent = sdCritLeft === 0 ? 'SHTD ✓' : 'SHTD';
-    }
-  }
+  // Shutdown: all items in landing done
+  const sdPhase = PHASES.find(p => p.id === 'landing');
+  const sdAllDone = sdPhase ? sdPhase.groups.every(g =>
+    g.items.every((it, i) => state[getKey('landing', g.name, i)])) : false;
+  const sdWasDone = window._lastSdAllDone || false;
+  if (sdAllDone && !sdWasDone) showShutdownPopup();
+  window._lastSdAllDone = sdAllDone;
 
-  // Flight close status: all of shutdown done + all of post-flight done
-  const postFlightPhase = PHASES.find(p => p.id === 'postflight');
-  const flightBar = document.getElementById('flightBar');
-  const flightSub = document.getElementById('flightSub');
-  if (flightBar && shutdownPhase && postFlightPhase) {
-    const sdAllDone = shutdownPhase.groups.every(g =>
-      g.items.every((it, i) => state[getKey('landing', g.name, i)]));
-    const pfAllDone = postFlightPhase.groups.every(g =>
-      g.items.every((it, i) => state[getKey('postflight', g.name, i)]));
-    const pfDone = postFlightPhase.groups.reduce((acc, g) =>
-      acc + g.items.filter((it, i) => state[getKey('postflight', g.name, i)]).length, 0);
-    const pfTotal = postFlightPhase.groups.reduce((acc, g) => acc + g.items.length, 0);
+  // Post-flight: all items done
+  const pfPhase = PHASES.find(p => p.id === 'postflight');
+  const pfAllDone = pfPhase ? pfPhase.groups.every(g =>
+    g.items.every((it, i) => state[getKey('postflight', g.name, i)])) : false;
+  const pfWasDone = window._lastPfAllDone || false;
+  if (pfAllDone && !pfWasDone) showPostflightPopup();
+  window._lastPfAllDone = pfAllDone;
 
-    if (!sdAllDone) {
-      flightBar.className = 'status-pill neutral';
-      flightBar.textContent = 'AFR';
-    } else if (pfAllDone) {
-      flightBar.className = 'status-pill go';
-      flightBar.textContent = 'AFR ✓';
+  const flightClosed = sdAllDone && pfAllDone;
+
+  if (statusBlock) {
+    const wasGo = statusBlock.classList.contains('green');
+    if (!goGo) {
+      statusBlock.className = 'status-block red';
+      statusBlock.textContent = 'NO-GO';
+      if (statusBlockSub) statusBlockSub.textContent = 'vertrek';
+    } else if (!flightClosed) {
+      statusBlock.className = 'status-block green';
+      statusBlock.textContent = 'GO';
+      if (statusBlockSub) statusBlockSub.textContent = 'vertrek';
+      // Show GO popup on transition from NO-GO to GO
+      if (!wasGo) showGoPopup();
     } else {
-      flightBar.className = 'status-pill';
-      flightBar.textContent = 'AFR';
+      statusBlock.className = 'status-block green';
+      statusBlock.textContent = 'AFGEROND';
+      if (statusBlockSub) statusBlockSub.textContent = 'vlucht gesloten';
     }
   }
 
@@ -1236,6 +1532,7 @@ function switchPhase(idx) {
   const tab = document.getElementById('tab_' + idx);
   if (tab) tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   showEngineTimer(PHASES[idx].id);
+  setTimeout(() => { renderFreqTable(); refreshRefBoxes(); }, 0);
 }
 
 // Engine timer state
@@ -1379,6 +1676,17 @@ function render() {
           `<a class="item-link" href="${l.url}" target="_blank" onclick="event.stopPropagation()">🔗 ${l.label}</a>`
         ).join('') : '';
         const linksHtml = links ? `<div class="item-links">${links}</div>` : '';
+        const notesHtml = item.notesField ? `
+          <div class="item-notes-row" onclick="event.stopPropagation()">
+            <div id="freqTableContainer"></div>
+          </div>` : '';
+        const freqs = getFreqs();
+        const refHtml = item.refField ? `
+          <div class="item-notes-row">
+            <div class="item-ref-box" data-ref="${item.refField.id}">
+              ${freqs.map(f => `<div class="item-ref-row"><div class="item-ref-name">${f.name||'—'}</div><div class="item-ref-freq">${f.freq||'—'}</div></div>`).join('')}
+            </div>
+          </div>` : '';
         const inputHtml = item.inputField ? `
           <div class="item-input-row" onclick="event.stopPropagation()">
             <span class="item-input-label">${item.inputField.label}:</span>
@@ -1403,6 +1711,8 @@ function render() {
               <div class="item-detail">${item.detail}</div>
               ${tag}
               ${linksHtml}
+              ${notesHtml}
+              ${refHtml}
               ${inputHtml}
               ${cdHtml}
             </div>
@@ -1417,8 +1727,8 @@ function render() {
   });
 
   updateStats();
+  setTimeout(() => { renderFreqTable(); refreshRefBoxes(); }, 0);
 }
-
 // Countdown timers
 const countdownState = {};
 
@@ -1645,9 +1955,52 @@ function updateClock() {
   if (el) el.textContent = h + ':' + m + ':' + s + 'Z';
 }
 
+function showPostflightPopup() {
+  const popup = document.getElementById('postflightPopup');
+  if (popup) {
+    popup.classList.add('show');
+    if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 400]);
+    setTimeout(() => popup.classList.remove('show'), 6000);
+  }
+}
+
+function closePostflightPopup() {
+  const popup = document.getElementById('postflightPopup');
+  if (popup) popup.classList.remove('show');
+}
+
+function showShutdownPopup() {
+  const popup = document.getElementById('shutdownPopup');
+  if (popup) {
+    popup.classList.add('show');
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+    setTimeout(() => popup.classList.remove('show'), 6000);
+  }
+}
+
+function closeShutdownPopup() {
+  const popup = document.getElementById('shutdownPopup');
+  if (popup) popup.classList.remove('show');
+}
+
+function showGoPopup() {
+  const popup = document.getElementById('goPopup');
+  if (popup) {
+    popup.classList.add('show');
+    if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
+    setTimeout(() => popup.classList.remove('show'), 5000);
+  }
+}
+
+function closeGoPopup() {
+  const popup = document.getElementById('goPopup');
+  if (popup) popup.classList.remove('show');
+}
+
 initState();
 loadState();
 loadCollectiveValues();
+  loadNotesValues();
 render();
 loadEngineTimer();
 // engine timer bar hidden
